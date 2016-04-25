@@ -61,3 +61,7 @@ func (nn *Network) Run(data ...float64) (out [][]float64) {
 
 	return out
 }
+
+func (nn *Network) Train(in, out []float64) [][]float64 {
+	panic("Not implemented.")
+}
