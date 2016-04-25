@@ -71,6 +71,7 @@ func (nn *Network) AllOutputs(data []float64) (out [][]float64) {
 	return out
 }
 
+// BUG: This doesn't work for some reason.
 func (nn *Network) Train(in, out []float64, alpha float64) [][]float64 {
 	a := nn.AllOutputs(in)
 	delta := make([][]float64, len(nn.w))
