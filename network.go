@@ -78,9 +78,9 @@ func (nn *Network) Train(in, out []float64, alpha float64) [][]float64 {
 	outLayer := len(nn.w) - 1
 
 	for neuron := range nn.w[outLayer] {
-		d := nn.GPrime(nn.w[outLayer][neuron].Input(a[outLayer]))
-		d *= out[neuron] - a[outLayer+1][neuron]
-		delta[outLayer] = append(delta[outLayer], d)
+		gp := nn.GPrime(nn.w[outLayer][neuron].Input(a[outLayer]))
+		e := out[neuron] - a[outLayer+1][neuron]
+		delta[outLayer] = append(delta[outLayer], gp*e)
 	}
 
 	for layer := outLayer - 1; layer >= 0; layer-- {
@@ -97,10 +97,7 @@ func (nn *Network) Train(in, out []float64, alpha float64) [][]float64 {
 
 	for layer := range nn.w {
 		for neuron := range nn.w[layer] {
-			nn.w[layer][neuron][0] += alpha * delta[layer][neuron]
-			for input := range nn.w[layer][neuron][1:] {
-				nn.w[layer][neuron][input+1] += alpha * a[layer][input] * delta[layer][neuron]
-			}
+			nn.w[layer][neuron].Update(a[layer], alpha, delta[layer][neuron])
 		}
 	}
 
@@ -116,4 +113,11 @@ func (n Neuron) Input(in []float64) float64 {
 	}
 
 	return sum
+}
+
+func (n Neuron) Update(in []float64, alpha, delta float64) {
+	n[0] += alpha * delta
+	for i := 1; i < len(n); i++ {
+		n[i] += alpha * in[i-1] * delta
+	}
 }
