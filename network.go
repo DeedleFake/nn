@@ -72,16 +72,20 @@ func (nn *Network) AllOutputs(data []float64) (out [][]float64) {
 }
 
 // BUG: This doesn't work for some reason.
-func (nn *Network) Train(in, out []float64, alpha float64) [][]float64 {
+func (nn *Network) Train(in, out []float64, alpha float64) ([][]float64, float64) {
 	a := nn.AllOutputs(in)
 	delta := make([][]float64, len(nn.w))
 	outLayer := len(nn.w) - 1
 
+	var avgErr float64
 	for neuron := range nn.w[outLayer] {
 		gp := nn.GPrime(nn.w[outLayer][neuron].Input(a[outLayer]))
 		e := out[neuron] - a[outLayer+1][neuron]
 		delta[outLayer] = append(delta[outLayer], gp*e)
+
+		avgErr += (e * e) / 2
 	}
+	avgErr /= float64(len(out))
 
 	for layer := outLayer - 1; layer >= 0; layer-- {
 		for neuron := range nn.w[layer] {
@@ -101,7 +105,7 @@ func (nn *Network) Train(in, out []float64, alpha float64) [][]float64 {
 		}
 	}
 
-	return a
+	return a, avgErr
 }
 
 type Neuron []float64
