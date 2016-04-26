@@ -3,7 +3,6 @@ package nn_test
 import (
 	"github.com/DeedleFake/nn"
 	"math"
-	"math/rand"
 	"testing"
 )
 
@@ -14,17 +13,18 @@ func TestAllOutputs(t *testing.T) {
 
 func TestTrain(t *testing.T) {
 	const (
-		Alpha = 1
+		Alpha = .5
 	)
 
-	n := nn.New(1, 10, 1)
+	n := nn.New(1, 10, 10, 1)
 	for i := 0; i < 10000; i++ {
-		r := rand.Float64() * 10
-		n.Train(
-			[]float64{r},
-			[]float64{math.Sin(r)},
-			Alpha,
-		)
+		for in := -math.Pi; in <= math.Pi; in += .05 {
+			n.Train(
+				[]float64{in},
+				[]float64{math.Sin(in)},
+				Alpha,
+			)
+		}
 	}
 
 	for i := -.5; i <= .5; i += .2 {
