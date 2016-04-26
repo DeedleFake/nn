@@ -6,6 +6,10 @@ import (
 	"testing"
 )
 
+const (
+	Alpha = .1
+)
+
 func assertSliceEqual(t *testing.T, s1, s2 []float64) (r bool) {
 	defer func() {
 		if !r {
@@ -46,13 +50,39 @@ func TestNeuron(t *testing.T) {
 	assertSliceEqual(t, n, []float64{31, 62, 93})
 }
 
-func TestTrain(t *testing.T) {
-	const (
-		Alpha = .1
-	)
+func TestXOR(t *testing.T) {
+	n := nn.New(2, 2, 1)
+	for i := 0; i < 100000; i++ {
+		n.Train(
+			[]float64{0, 0},
+			[]float64{0},
+			Alpha,
+		)
+		n.Train(
+			[]float64{0, 1},
+			[]float64{1},
+			Alpha,
+		)
+		n.Train(
+			[]float64{1, 0},
+			[]float64{1},
+			Alpha,
+		)
+		n.Train(
+			[]float64{1, 1},
+			[]float64{0},
+			Alpha,
+		)
+	}
+	t.Logf("%v ^ %v -> %v", 0, 0, n.Run([]float64{0, 0}))
+	t.Logf("%v ^ %v -> %v", 0, 1, n.Run([]float64{0, 1}))
+	t.Logf("%v ^ %v -> %v", 1, 0, n.Run([]float64{1, 0}))
+	t.Logf("%v ^ %v -> %v", 1, 1, n.Run([]float64{1, 1}))
+}
 
+func TestDiv(t *testing.T) {
 	n := nn.New(1, 1)
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 100000; i++ {
 		for i := 0; i < 10; i++ {
 			n.Train(
 				[]float64{float64(i)},
@@ -65,9 +95,11 @@ func TestTrain(t *testing.T) {
 	for i := float64(0); i < 10; i++ {
 		t.Logf("%v / 2 -> %v", i, n.Run([]float64{i}))
 	}
+}
 
-	n = nn.New(1, 10, 10, 1)
-	for i := 0; i < 10000; i++ {
+func TestSin(t *testing.T) {
+	n := nn.New(1, 10, 10, 1)
+	for i := 0; i < 100000; i++ {
 		for in := -math.Pi; in <= math.Pi; in += .05 {
 			n.Train(
 				[]float64{in},
