@@ -53,7 +53,7 @@ func TestNeuron(t *testing.T) {
 func TestXOR(t *testing.T) {
 	n := nn.New(2, 2, 1)
 	for i := 0; i < 100000; i++ {
-		_, err := n.Train(
+		_, acc := n.Train(
 			[]float64{0, 0},
 			[]float64{0},
 			Alpha,
@@ -64,24 +64,24 @@ func TestXOR(t *testing.T) {
 			[]float64{1},
 			Alpha,
 		)
-		err += tmp
+		acc += tmp
 
 		_, tmp = n.Train(
 			[]float64{1, 0},
 			[]float64{1},
 			Alpha,
 		)
-		err += tmp
+		acc += tmp
 
-		_, err = n.Train(
+		_, acc = n.Train(
 			[]float64{1, 1},
 			[]float64{0},
 			Alpha,
 		)
-		err += tmp
+		acc += tmp
 
 		if i%10000 == 0 {
-			t.Logf("Averge error after %v iterations: %v", i, err/4)
+			t.Logf("Average accuracy after %v iterations: %v", i, acc/4)
 		}
 	}
 	t.Logf("%v ^ %v -> %v", 0, 0, n.Run([]float64{0, 0}))
